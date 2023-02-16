@@ -13,10 +13,14 @@ import cv2
 import numpy as np
 
 #KONSTANTE
-NAO_IP = "192.168.0.130"
 Spremenljivka = None
 KONEC = False
+#ip robota
+NAO_IP = "192.168.0.130"
+#stevilo korakov v minmax algoritmu
 N_STEPS = 7
+#geslo robota
+GESLO= "2UglyBetty"
 
 """
 def random(board):
@@ -64,7 +68,7 @@ RUMENA=2
 #fotografiraj
 def fot(foto):
     foto.takePicture("/home/nao/recordings/cameras","image.jpg")
-    cmd = 'pscp -pw 2UglyBetty nao@192.168.0.130:/home/nao/recordings/cameras/image.jpg .'
+    cmd = 'pscp -pw ' + GESLO + ' nao@192.168.0.130:/home/nao/recordings/cameras/image.jpg .'
     os.system(cmd)
     return cv2.imread("image.jpg")
 
@@ -73,25 +77,25 @@ def fun(e): return e[1]
 
 #ali smo zmagali
 def winning_move(board, piece): 
-    # Check horizontal locations for win
+    # Preveri horizontale za zmago
      for c in range(4):
         for r in range(6):
             if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
                 return True
  
-    # Check vertical locations for win
+    # Preveri vertikale za zmago
      for c in range(7):
         for r in range(3):
             if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
                 return True
  
-    # Check positively sloped diaganols
+    # Preveri pozitivne diagonale
      for c in range(4):
         for r in range(3):
             if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
                 return True
  
-    # Check negatively sloped diaganols
+    # Preveri negativne diagonale
      for c in range(4):
         for r in range(3, 6):
             if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
@@ -253,6 +257,8 @@ class Connect4(ALModule):
 
         #vprasamo igralca s katero barvo plosckov bo igral, 
         #ce ga robot slucajno ne razume igra z rdecimi NAO pa z rumenimi
+        self.pog.subscribe("govor")
+        self.pog.unsubscribe("govor")
         self.pog.setLanguage("English")
         besede = ["red","yellow"]
         self.pog.setVocabulary(besede, False)
@@ -428,7 +434,7 @@ class Connect4(ALModule):
         premik=0
 
         #st. znaka, ki predstavlja dolocen stolpec
-        znaki=[64, 68, 80, 84, 85, 107, 108]
+        znaki=[68, 64, 80, 84, 85, 107, 108]
         st=[znaki[col]]
 
         #vzdigne roko in pripravi za ploscek, prime in pripravi za premikanje
@@ -477,10 +483,10 @@ class Connect4(ALModule):
             self.pos.goToPosture("StandInit", 0.5)
 
         #premakni do znaka s track
-        distanceX = 0.1
+        distanceX = 0.115
         distanceY = 0.0
         angleWz = 0.0
-        thresholdX = 0.1
+        thresholdX = 0.115
         thresholdY = 0.1
         thresholdWz = 0.06
 
